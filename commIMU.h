@@ -10,15 +10,15 @@ void imuInit();
 
 class commIMU{
 	public:
-		float AX;
-		float AY;
-		float AZ;
-		float GX;
-		float GY;
-		float GZ;
-		float MX;
-		float MY;
-		float MZ;
+		int16_t  AX;
+		int16_t  AY;
+		int16_t  AZ;
+		int16_t  GX;
+		int16_t  GY;
+		int16_t  GZ;
+		int16_t  MX;
+		int16_t  MY;
+		int16_t  MZ;
 		void getData();
 	private:
 	
