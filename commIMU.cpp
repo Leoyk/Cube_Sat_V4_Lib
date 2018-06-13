@@ -19,7 +19,7 @@
 
 
 
-void I2Cread(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data)
+volatile void I2Cread(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data)
 {
   // Set register address
   Wire.beginTransmission(Address);
@@ -33,7 +33,7 @@ void I2Cread(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data)
     Data[index++]=Wire.read();
 }
 
-void I2CwriteByte(uint8_t Address, uint8_t Register, uint8_t Data)
+volatile void I2CwriteByte(uint8_t Address, uint8_t Register, uint8_t Data)
 {
   // Set register address
   Wire.beginTransmission(Address);
@@ -42,7 +42,7 @@ void I2CwriteByte(uint8_t Address, uint8_t Register, uint8_t Data)
   Wire.endTransmission();
 }
 
-void imuInit(){
+volatile void imuInit(){
   // Set accelerometers low pass filter at 1000Hz
   I2CwriteByte(MPU9250_ADDRESS,0x19,7);
   // Set gyroscope low pass filter at 1000Hz
@@ -68,7 +68,7 @@ void imuInit(){
   uint8_t Buf[14] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   uint8_t Mag[7]={0,0,0,0,0,0,0}; 
   
-void commIMU::getData(){
+volatile void commIMU::getData(){
 
   for(int i = 0;i < 14;i ++){
 	Buf[i] = 0;
