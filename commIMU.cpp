@@ -4,7 +4,7 @@
 
 
 
-#define    MPU9250_ADDRESS            0x68
+#define    MPU9250_ADDRESS            0x69
 #define    MAG_ADDRESS                0x0C
 
 #define    GYRO_FULL_SCALE_250_DPS    0x00  
