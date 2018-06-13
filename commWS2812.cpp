@@ -7,8 +7,8 @@
 
 
 
-  #define PINRIGHT  2
-  #define PINLEFT   3  
+  #define PINRIGHT  26
+  #define PINLEFT   25  
   #define PINMIDDLE 4
   
   
