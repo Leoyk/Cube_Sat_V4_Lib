@@ -81,14 +81,14 @@ void commIMU::getData(){
   int16_t gz=Buf[12]<<8 | Buf[13];
   
   // Accelerometer +- 8g
-  AX = ax*0.002407; 
-  AY = ay*0.002407;
-  AZ = az*0.002407;  
+  AX = ax;//*0.002407; 
+  AY = ay;//*0.002407;
+  AZ = az;//*0.002407;  
   
   // Gyroscope +- 1000
-  GX = gx*0.030518; 
-  GY = gy*0.030518;
-  GZ = gz*0.030518;  
+  GX = gx;//*0.030518; 
+  GY = gy;//*0.030518;
+  GZ = gz;//*0.030518;  
   
   // Read register Status 1 and wait for the DRDY: Data Ready
   
@@ -112,9 +112,9 @@ void commIMU::getData(){
   
   
   // Magnetometer  4912 / 32760 uT
-  MX = mx*0.1499; 
-  MY = my*0.1499;
-  MZ = mz*0.1499;  
+  MX = mx;//*0.1499; 
+  MY = my;//*0.1499;
+  MZ = mz;//*0.1499;  
 
 }
 
