@@ -44,14 +44,14 @@ void I2CwriteByte(uint8_t Address, uint8_t Register, uint8_t Data)
 
 void imuInit(){
   // Set accelerometers low pass filter at 1000Hz
-  I2CwriteByte(MPU9250_ADDRESS,29,0x07);
+  I2CwriteByte(MPU9250_ADDRESS,0x19,7);
   // Set gyroscope low pass filter at 1000Hz
-  I2CwriteByte(MPU9250_ADDRESS,26,0x07);
+  I2CwriteByte(MPU9250_ADDRESS,0x1A,0x00);
   
   // Configure gyroscope range
-  I2CwriteByte(MPU9250_ADDRESS,27,GYRO_FULL_SCALE_250_DPS);
+  I2CwriteByte(MPU9250_ADDRESS,0x1B,GYRO_FULL_SCALE_250_DPS);
   // Configure accelerometers range
-  I2CwriteByte(MPU9250_ADDRESS,28,ACC_FULL_SCALE_2_G);
+  I2CwriteByte(MPU9250_ADDRESS,0x1C,ACC_FULL_SCALE_2_G);
 	
   // PLL with X axis gyroscope reference and disable sleep mode
   I2CwriteByte(MPU9250_ADDRESS,0X6B,01);
