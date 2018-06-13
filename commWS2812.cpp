@@ -7,12 +7,12 @@
 
 
 
-  #define PINRIGHT  26
+  #define PINRIGHT  26   //为调试修改的灯板引脚号
   #define PINLEFT   25  
   #define PINMIDDLE 4
   
   
-  #define BRIGHTLEFT   40
+  #define BRIGHTLEFT   40//默认的灯板亮度
   #define BRIGHTRIGHT  40
   int     BRIGHTMIDDLE=40;
   
