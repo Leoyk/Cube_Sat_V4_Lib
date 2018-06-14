@@ -5,7 +5,7 @@
 
 
 
-void imuInit();
+volatile void imuInit();
 
 
 class commIMU{
@@ -19,7 +19,7 @@ class commIMU{
 		double  MX;
 		double  MY;
 		double  MZ;
-		void getData();
+		volatile void getData();
 	private:
 	
 };

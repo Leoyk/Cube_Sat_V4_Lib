@@ -22,3 +22,61 @@ void setVol(int a){
   a = constrain(a, 0, 30);
   comm.println(vol + String(a));
 }
+
+void orderState(){
+  while(comm.read()>= 0){}//clear serialbuffer
+  comm.println("AT+RET"); 
+}
+
+bool getState(int *volume,int *frequncy){
+  
+  static String vol = "";
+  static String freq = "";
+  static String inputString3 = "";
+  
+  vol  = "";
+  freq  = "";
+  inputString3  = "";
+  
+ while (comm.available()) {
+	 
+      char inChar = (char)comm.read();
+	  
+      if(isDigit(inChar))
+        inputString3 += inChar;
+    }
+
+  vol += inputString3[0];
+  vol += inputString3[1];
+
+  
+  for(int i = 2;i < inputString3.length();i ++){
+    freq += inputString3[i];
+  }
+  *volume = vol.toInt();
+  *frequncy =freq.toInt();
+  if(*volume > 30 || *volume < 0 || *frequncy > 1080 || *frequncy < 870 ){
+	 return 1;  
+  }
+  else 
+	  return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
