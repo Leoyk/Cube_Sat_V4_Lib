@@ -24,13 +24,14 @@ void camInit(){
   pinMode(53, OUTPUT); // SS on Mega 	
   
   if (!SD.begin(chipSelect)) {
+    Serial.println("Cam send ：Card failed, or not present");
     // don't do anything more:
     return;
   }   
   
   
 
-    Serial.println("ok");  
+    Serial.println("cam init ok");  
   
   //复位摄像头  可选
   orderReset();//测试通过
