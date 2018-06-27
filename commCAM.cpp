@@ -24,7 +24,6 @@ void camInit(){
   pinMode(53, OUTPUT); // SS on Mega 	
   
   if (!SD.begin(chipSelect)) {
-    Serial.println("Card failed, or not present");
     // don't do anything more:
     return;
   }   
