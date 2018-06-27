@@ -84,6 +84,7 @@ bool getState(int *volume,int *frequncy){
   }
   else 
 	  return 1;
+  
 }
 
 
