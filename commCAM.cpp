@@ -2,7 +2,8 @@
 #include "SoftwareSerial.h"
 //#define debugCam 
 
-SoftwareSerial commCAM = SoftwareSerial(11,10);//R T
+//SoftwareSerial commCAM = SoftwareSerial(11,10);//R T
+SoftwareSerial commCAM = SoftwareSerial(A10,A11);//R T
 
 unsigned int inNum = 0;
 long picLen[4];
