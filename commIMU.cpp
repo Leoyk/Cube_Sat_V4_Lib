@@ -18,7 +18,6 @@
 #define    ACC_FULL_SCALE_16_G       0x18
 
 
-
 volatile void I2Cread(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data)
 {
   // Set register address
@@ -68,7 +67,11 @@ volatile void imuInit(){
   uint8_t Buf[14] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   uint8_t Mag[7]={0,0,0,0,0,0,0}; 
   
-volatile void commIMU::getData(){
+  
+int16_t check[20]; 
+int gi = 0,ga = 0; 
+  
+volatile bool commIMU::getData(){
 
   for(int i = 0;i < 14;i ++){
 	Buf[i] = 0;
@@ -121,6 +124,23 @@ volatile void commIMU::getData(){
   MY = my;//*0.1499;
   MZ = mz;//*0.1499;  
 
+  
+check[gi] = mx;  
+	gi ++;
+if(gi > 19)
+	gi = 0;
+
+for(ga = 0;check[ga] == check[ga + 1];ga ++){
+	if(ga > 17)
+		break;
+}
+
+
+  if(ga > 17)
+	  return 0;
+  else 
+	  return 1; 
+  
 }
 
 

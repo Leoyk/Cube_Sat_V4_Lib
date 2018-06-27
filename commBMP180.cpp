@@ -28,7 +28,7 @@ static int mc;            // 0xBC     0xBD
 static int md;            // 0xBE     0xBF
 static long b5;          
 
-
+int cnt = 0;
 
 
 void pressureInit(){
@@ -43,7 +43,6 @@ void pressureInit(){
   mb  = bmp180ReadDate(0xBA);  
   mc  = bmp180ReadDate(0xBC);  
   md  = bmp180ReadDate(0xBE);
-  
   
 //get baseline  
   
@@ -116,10 +115,10 @@ double pressureVal()
 
 
 // Altitude =(44330.0 * (1.0-pow((float)(pressure) / 101325, 1.0/5.255)) ); 
-double altitudeVal(double pre){
+double altitudeVal(double pre,long baseline){
   
   double pre2;
-  pre2 = pre/101325;
+  pre2 = pre/baseline;
   pre2 = pow(pre2,0.19029496);
   
   return 44330*(1-pre2); 
@@ -138,7 +137,11 @@ int bmp180Read(unsigned char address)
   Wire.endTransmission();
   
   Wire.requestFrom(BMP180ADD, 1);
-  while(!Wire.available());
+  
+  cnt = 500;
+  while(!Wire.available() && cnt --){
+	  delay(1);
+  }
     
   return Wire.read();
 }
@@ -151,7 +154,12 @@ int bmp180ReadDate(unsigned char address)
   Wire.write(address);
   Wire.endTransmission();
   Wire.requestFrom(BMP180ADD, 2);
-  while(Wire.available()<2);
+  
+  cnt = 500;
+  while((Wire.available()<2) && cnt --){
+	  delay(1);
+  }
+  
   msb = Wire.read();
   lsb = Wire.read();
   return (int) msb<<8 | lsb;
@@ -205,8 +213,13 @@ unsigned long getPV()
   Wire.write(0xF6);                        // Read register 0xF6 (MSB), 0xF7 (LSB), and 0xF8 (XLSB)
   Wire.endTransmission();
   
-  Wire.requestFrom(BMP180ADD, 3); 
-  while(Wire.available() < 3);             // Wait for data to become available
+  Wire.requestFrom(BMP180ADD, 3);
+
+
+  cnt = 500;
+  while((Wire.available() < 3)&&(cnt --)){
+	delay(1); 
+  }           // Wait for data to become available
   msb = Wire.read();
   lsb = Wire.read();
   xlsb = Wire.read();

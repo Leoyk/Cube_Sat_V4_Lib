@@ -11,7 +11,7 @@ void orderPV();//延时30ms之后才能获取压力值
 double pressureVal();//获取到的气压值 单位：Pa
 
 
-double altitudeVal(double pre);//传入气压换算海拔高度值 单位：m
+double altitudeVal(double pre,long baseline);//传入气压换算海拔高度值 单位：m ,基准面高度：baseline 101325
 
 
 void orderTV();//延时5ms之后才能获取温度值

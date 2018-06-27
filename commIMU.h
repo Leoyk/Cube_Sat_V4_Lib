@@ -19,7 +19,7 @@ class commIMU{
 		double  MX;
 		double  MY;
 		double  MZ;
-		volatile void getData();
+		volatile bool getData();
 	private:
 	
 };

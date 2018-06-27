@@ -6,6 +6,141 @@
  Wire.begin();
 */
 
+
+//SerialServo
+ #include "commCAM.h"
+/*
+摄像头接硬件串口3
+
+
+//初始化摄像头： 检测SD卡 
+函数1：void camInit(); 
+用法：初始化函数中调用，调用结束后需要等待200ms然后清空摄像头缓存
+参数：无参数
+返回值：无	
+  
+  
+//清空缓存 
+函数2：void clearInput();
+用法：清空摄像头串口的接收缓存
+参数：无参数
+返回值：无	
+  
+ //复位摄像头 不返回任何值，用后可能需要清空串口缓存 
+函数3：void orderReset();
+用法：直接调用。
+参数：无参数
+返回值：无	
+
+
+//请求版本号 调用后需延时> 10ms才能获取版本号
+函数4：void orderVersion();
+用法：直接调用
+参数：无参数
+返回值：无	
+
+
+//获得版本号 开启串口输出情况下会打印出版本号   返回
+函数5：bool getVersion();
+用法：order之后等待10ms之后读取
+参数：无参数
+返回值：1：无错误，返回0：错误；
+
+
+  
+
+//1 stop pic 
+	//请求停止刷新图像 调用后需延时> 10ms才能获取反馈
+	void orderStop();
+	
+	//获取停止状态： 0：操作成功，1：操作失败；
+	bool getStop();
+
+//2 get lenth 
+	//请求获取图像数据长度 调用后需延时> 10ms才能获取反馈
+	void orderLenth();
+	
+	//将获取的长度返回到*lenth中  1：操作成功，0：操作失败；
+	bool getLenth(long *lenth);
+
+//3 get pic
+	//创建文件并打开
+	void preFile(String* name);
+	
+	//请求获取图像数据 调用后需延时> 10ms才能获取反馈
+	bool orderPic();
+	
+	void getPic();
+	
+	//关闭文件
+	void closeFile();
+
+//4 refresh img 初始化变量并刷新图像
+	void refreshImg();
+	
+	//初始化变量
+	void initV();
+
+
+*/
+
+
+
+
+//SerialServo
+ #include "commServo.h"
+/*
+
+
+
+设置软串口，名为SSerial RX TX
+SoftwareSerial  SSerial(50, 51);
+  
+  
+  
+函数1：void ssInit(void );
+用法：初始化函数中调用,初始化软串口波特率
+参数：无参数
+返回值：无	
+  
+  
+函数2：void changeID(uint8_t oldID, uint8_t newID);
+用法：修改地址。知道原地址可以修改新地址，原地址设置为254时面向所有连接的对象广播
+参数：oldID：原地址；  newID： 新地址。
+返回值：无	
+  
+  
+函数3：void moveToAngle(int ID,int angle,int time);//此函数会使电机上力 
+用法：指定ID的舵机，运动到指定的角度angle，运动时间为time，此函数需要添加额外的延时。
+参数：ID ：0~253； angle：角度：0~240dge；time：0~30000ms
+返回值：无	
+
+  
+函数4：unLoad(int ID);
+用法：指定ID的舵机脱力。
+参数：ID ：0~253；
+返回值：无	
+
+
+  
+函数5：load(int ID);
+用法：指定ID的舵机上力。
+参数：ID ：0~253；
+返回值：无	
+
+
+  
+函数6：double readAngle(int ID);
+用法：指定ID的舵机现在的角度。
+参数：ID ：0~253；
+返回值：角度：0~240dge
+
+
+
+*/
+
+
+
 //WS2812
  #include "commWS2812.h"
 /*
@@ -101,7 +236,7 @@ class commIMU{
 函数2：IMU.getData();
 用法：定义IMU然后初始化，再调用getData;
 参数：无参数
-返回值：无，可调用类中的元素。
+返回值：成功1 失败0
 
 */
 
@@ -116,10 +251,11 @@ class commIMU{
 返回值：无
 
 
-函数2：sht31dVal(float *tem,float *rh);
-用法：直接调用
-参数：tem存储温度，rh存储湿度；
-返回值：无
+//在调用获取温湿度之前必须先执行此步骤，然后等待500ms
+void orderTH();
+
+//温度 ,湿度
+void getTH(float *t,float *h);
 
 */
 
@@ -226,10 +362,13 @@ class commIMU{
 
 
 函数5：bool getState(int *volume,int *frequncy);
-用法：//获取状态值，成功返回0；失败，返回1；分别传到两个变量里，frequency为int型，当调整模块的音量或频率时获取的数据可能会失败
+用法：//获取状态值，成功返回1；失败，返回0；分别传到两个变量里，frequency为int型，当调整模块的音量或频率时获取的数据可能会失败
 参数：音量、频率
 返回值：无返回值
 
+int getEcho()
+
+返回获取到的数字数据，可以用来校验设置是否成功，需要在设置后10ms之后调用
 
 */
 
@@ -278,9 +417,9 @@ class commIMU{
 
 
 
-函数4：altitudeVal();获取高度
+函数4：double altitudeVal(double pre,long baseline)
 用法：获取完气压值之后才能调用
-参数：气压值
+参数：气压值 获取高度 ,基准面高度：baseline 101325
 返回值：浮点型海拔高度 单位：m;
 
 

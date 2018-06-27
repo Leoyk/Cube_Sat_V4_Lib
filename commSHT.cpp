@@ -1,11 +1,9 @@
 #include "commSHT.h"
-#include "Arduino.h"
-
-#include "ClosedCube_SHT31D.h"
+#include <Arduino.h>
+#include <Wire.h>
+#include "THbase.h"
 ///////////////////////////////////////////////////温湿度传感器数据
-ClosedCube_SHT31D sht3xd;
-
-struct SHT31D  result;
+Adafruit_SHT31 sht31 = Adafruit_SHT31();
 
 
 /*================================================================ 
@@ -26,31 +24,18 @@ struct SHT31D  result;
 ================================================================*/ 
 void shtInit(int add){
   //温湿度传感器设置 
-  sht3xd.begin(add);//0x44
+  sht31.begin(add);//0x44
 }
 
 
-/*================================================================ 
-* 函 数 名：
-* getsht31d 
-* 
-* 参 数：
-* 需要存放温度和湿度的变量地址
-*
-* 功 能 描 述: 
-* 将读取的温湿度数据存储在指定地址的变量中
-* 
-* 返 回 值：
-* 无
-* 
-* 作 者：刘要坤 2018年5月24日14:31:48
 
-================================================================*/ 
-void sht31dVal(float *tem,float *rh){
 
-  result = sht3xd.readTempAndHumidity(SHT3XD_REPEATABILITY_LOW, SHT3XD_MODE_CLOCK_STRETCH, 50);
+void orderTH(){
+	sht31.orderTh();
+}
 
-  *tem = result.t;
-  *rh  = result.rh;
-    }   
+
+void getTH(float *t,float *h){
+	sht31.getTh(t,h);
+}
  

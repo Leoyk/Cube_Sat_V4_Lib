@@ -3,7 +3,9 @@
 #include "SoftwareSerial.h"
 
 
-SoftwareSerial comm = SoftwareSerial(A10,A11);//R T
+//SoftwareSerial comm = SoftwareSerial(A10,A11);//R T
+
+#define comm Serial2
 // 10, 11, 12, 13, 50, 51, 52, 53, 62, 63, 64, 65, 66, 67, 68, 69
 
 static String fre="AT+FRE=";
@@ -18,9 +20,32 @@ void setFre(int a){
   a = constrain(a, 870, 1080);
   comm.println(fre + String(a));
 }
+int getEcho(){
+ 
+  String vol = "";
+  String inputString3 = "";
+  
+  vol  = "";
+  inputString3 = "";
+ while (comm.available()) {
+	 
+      char inChar = (char)comm.read();
+	  
+      if(isDigit(inChar))
+        inputString3 += inChar;
+    }
+
+   return inputString3.toInt();  
+}
+
+
 void setVol(int a){
   a = constrain(a, 0, 30);
-  comm.println(vol + String(a));
+  
+  if(a < 10)
+   comm.println(vol + '0' + String(a));
+  else 
+   comm.println(vol + String(a));
 }
 
 void orderState(){
@@ -30,14 +55,13 @@ void orderState(){
 
 bool getState(int *volume,int *frequncy){
   
-  static String vol = "";
-  static String freq = "";
-  static String inputString3 = "";
+  String vol = "";
+  String freq = "";
+  String inputString3 = "";
   
   vol  = "";
   freq  = "";
-  inputString3  = "";
-  
+  inputString3 = "";
  while (comm.available()) {
 	 
       char inChar = (char)comm.read();
@@ -56,10 +80,10 @@ bool getState(int *volume,int *frequncy){
   *volume = vol.toInt();
   *frequncy =freq.toInt();
   if(*volume > 30 || *volume < 0 || *frequncy > 1080 || *frequncy < 870 ){
-	 return 1;  
+	 return 0;  
   }
   else 
-	  return 0;
+	  return 1;
 }
 
 

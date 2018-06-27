@@ -16,7 +16,7 @@ void orderState();
 //获取状态值，成功返回0；失败，返回1；分别传到两个变量里，frequency为int型，当调整模块的音量或频率时获取的数据可能会失败
 bool getState(int *volume,int *frequncy);
 
-
+int getEcho();
 
 
 
