@@ -1,6 +1,6 @@
 #include"commCAM.h"
 #include "SoftwareSerial.h"
-//#define debugCam 
+#define debugCam 
 
 //SoftwareSerial commCAM = SoftwareSerial(11,10);//R T
 SoftwareSerial commCAM = SoftwareSerial(A10,A11);//R T
@@ -16,7 +16,7 @@ Sd2Card card;
 
 File imgFile;
 
-char filename[10];
+static char filename[10];
 
 
 void camInit(){
@@ -26,7 +26,6 @@ void camInit(){
   if (!SD.begin(chipSelect)) {
     Serial.println("Cam send ：Card failed, or not present");
     // don't do anything more:
-    return;
   }   
   
   
@@ -166,9 +165,13 @@ byte rcv[]={0x76,0x00,0x34,0x00,0x04};
     }
 
    if(i < 4){//check wrong
+	dl = 0;
     return 0;
    }
    else {//check ok
+	
+	dl = 0;	
+   
     dl += picLen[0] << 24;  
     dl += picLen[1] << 16; 
     dl += picLen[2] << 8; 
@@ -199,44 +202,66 @@ void preFile(String* name){
   *name = filename;
 }
 
-bool orderPic(){// order PIC data if over return 0
-
-  if(BA >= dl){//如果起始地址小于总长
-    return 0;
-    }
-    
+void  orderPic(){// order PIC data if over return 0
   byte cmd[]={0x56,0x00,0x32,0x0C,0x00,0x0A,0,0,(BA >> 8)&0xFF,(BA >> 0)&0xFF,0,0,0,32,0x00,0x00};
 
   commCAM.write(&cmd[0],sizeof(cmd)/sizeof(cmd[0])); 
-
-  
-  return 1;
 }
 
-void getPic(){//get PIC data
+bool getPic(bool * a){//get PIC data
   
-String data = "";
-String rcv = "";
+String rge = "";
+int i = 0;
+
+byte rcv[]={0x76,0x00,0x32,0x00,0x00};
 
   inNum = 0;
   while (commCAM.available()){
-    if(inNum < 5)
-     rcv += (char)commCAM.read();
-    else if(inNum < 5 + 32)
+    if(inNum < 5){ 
+     rge += (char)commCAM.read();
+	}
+	
+	if (inNum == 5){
+	  for(i = 0;i < 5;i ++){
+		if(rge[i] != rcv[i])
+		  break;
+	  }	
+	  
+	  if(i < 4){//check wrong
+		clearInput();
+		return 0;
+	 } 
+	}
+   
+    if((inNum > 4) && (inNum < 37))
       aaa[inNum -5] = commCAM.read();
-      //data += (char)commCAM.read();
-    else commCAM.read();
+    if(inNum > 36) commCAM.read();
     
     inNum ++;
   } 
 
 
   BA += 32;  
+  
+  Serial.print(dl - BA);  
+  
+  if(BA >= dl){//如果起始地址小于总长
+    *a = 0;
+    }
+  else 
+    *a = 1; 
+  
   inNum = 0;
 
 //  buffer = aaa;
   imgFile.write(aaa,32 ); 
+
+  
+  return 1;
 }
+
+
+
 
 //4 refresh img
 void refreshImg(){

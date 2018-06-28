@@ -130,10 +130,10 @@ void clearInput();
 	void preFile(String* name);
 	
 	//请求获取图像数据 调用后需延时> 10ms才能获取反馈
-	bool orderPic();
+	void orderPic();
 	
 
-	void getPic();
+	bool getPic(bool * a);
 	
 	//关闭文件
 	void closeFile();
