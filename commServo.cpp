@@ -1,13 +1,14 @@
 #include "commServo.h"
 
-//#include <SoftwareSerial.h>
+#include <SoftwareSerial.h>
 
 /*
   设置软串口，名为SSerial RX TX
 */
-//SoftwareSerial  SSerial(50, 51);
-#define SSerial Serial2
+//#define SSerial Serial2
 
+
+SoftwareSerial SSerial = SoftwareSerial(10,11);//R T
 #define GET_LOW_BYTE(A) (uint8_t)((A))
 //宏函数 获得A的低八位
 #define GET_HIGH_BYTE(A) (uint8_t)((A) >> 8)

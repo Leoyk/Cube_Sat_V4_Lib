@@ -3,9 +3,8 @@
 #include "SoftwareSerial.h"
 
 
-//SoftwareSerial comm = SoftwareSerial(A10,A11);//R T
-
-#define comm Serial2
+SoftwareSerial comm = SoftwareSerial(10,11);//R T
+//#define comm Serial2
 // 10, 11, 12, 13, 50, 51, 52, 53, 62, 63, 64, 65, 66, 67, 68, 69
 
 static String fre="AT+FRE=";
@@ -20,6 +19,8 @@ void setFre(int a){
   a = constrain(a, 870, 1080);
   comm.println(fre + String(a));
 }
+
+
 int getEcho(){
  
   String vol = "";
