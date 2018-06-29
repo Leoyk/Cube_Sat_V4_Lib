@@ -6,7 +6,7 @@
  
  
  #define chipSelect 5
-// #define commCAM Serial3
+ #define commCAM Serial2
 
  
 /*
@@ -130,10 +130,10 @@ void clearInput();
 	void preFile(String* name);
 	
 	//请求获取图像数据 调用后需延时> 10ms才能获取反馈
-	void orderPic();
+	bool orderPic();
 	
 
-	bool getPic(bool * a);
+	void getPic();
 	
 	//关闭文件
 	void closeFile();

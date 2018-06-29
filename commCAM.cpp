@@ -1,36 +1,30 @@
 #include"commCAM.h"
-#include "SoftwareSerial.h"
-#define debugCam 
 
-//SoftwareSerial commCAM = SoftwareSerial(11,10);//R T
-SoftwareSerial commCAM = SoftwareSerial(A10,A11);//R T
+//#define debugCam 
 
 unsigned int inNum = 0;
 long picLen[4];
 long BA = 0;
 long dl;
-uint8_t aaa[32];
-
+uint8_t aaa[16];
 
 Sd2Card card;
 
 File imgFile;
 
-static char filename[10];
-
+char filename[10];
 
 void camInit(){
   commCAM.begin(115200);    
   pinMode(53, OUTPUT); // SS on Mega 	
   
   if (!SD.begin(chipSelect)) {
-    Serial.println("Cam send ：Card failed, or not present");
-    // don't do anything more:
+    Serial.println("Card failed, or not present");
+    return;
   }   
   
-  
 
-    Serial.println("cam init ok");  
+    Serial.println("ok");  
   
   //复位摄像头  可选
   orderReset();//测试通过
@@ -123,10 +117,10 @@ byte rcv[]={0x76,0x00,0x36,0x00};
 
     
    if(i < 4){//check wrong  
-      return 0;
+      return 1;
    }
    else {//check ok
-      return 1;
+      return 0;
    }
 }
 
@@ -165,20 +159,16 @@ byte rcv[]={0x76,0x00,0x34,0x00,0x04};
     }
 
    if(i < 4){//check wrong
-	dl = 0;
-    return 0;
+    return 1;
    }
    else {//check ok
-	
-	dl = 0;	
-   
     dl += picLen[0] << 24;  
     dl += picLen[1] << 16; 
     dl += picLen[2] << 8; 
     dl += picLen[3] << 0; 
     
     *lenth = dl;
-    return 1;
+    return 0;
    }
 }
 
@@ -202,66 +192,44 @@ void preFile(String* name){
   *name = filename;
 }
 
-void  orderPic(){// order PIC data if over return 0
-  byte cmd[]={0x56,0x00,0x32,0x0C,0x00,0x0A,0,0,(BA >> 8)&0xFF,(BA >> 0)&0xFF,0,0,0,32,0x00,0x00};
+bool orderPic(){// order PIC data if over return 0
+
+  if(BA >= dl){//如果起始地址小于总长
+    return 0;
+    }
+    
+  byte cmd[]={0x56,0x00,0x32,0x0C,0x00,0x0A,0,0,(BA >> 8)&0xFF,(BA >> 0)&0xFF,0,0,0,16,0x00,0x00};
 
   commCAM.write(&cmd[0],sizeof(cmd)/sizeof(cmd[0])); 
-}
-
-bool getPic(bool * a){//get PIC data
-  
-String rge = "";
-int i = 0;
-
-byte rcv[]={0x76,0x00,0x32,0x00,0x00};
-
-  inNum = 0;
-  while (commCAM.available()){
-    if(inNum < 5){ 
-     rge += (char)commCAM.read();
-	}
-	
-	if (inNum == 5){
-	  for(i = 0;i < 5;i ++){
-		if(rge[i] != rcv[i])
-		  break;
-	  }	
-	  
-	  if(i < 4){//check wrong
-		clearInput();
-		return 0;
-	 } 
-	}
-   
-    if((inNum > 4) && (inNum < 37))
-      aaa[inNum -5] = commCAM.read();
-    if(inNum > 36) commCAM.read();
-    
-    inNum ++;
-  } 
-
-
-  BA += 32;  
-  
-  Serial.print(dl - BA);  
-  
-  if(BA >= dl){//如果起始地址小于总长
-    *a = 0;
-    }
-  else 
-    *a = 1; 
-  
-  inNum = 0;
-
-//  buffer = aaa;
-  imgFile.write(aaa,32 ); 
 
   
   return 1;
 }
 
+void getPic(){//get PIC data
+  
+String data = "";
+String rcv = "";
+
+  inNum = 0;
+  while (commCAM.available()){
+    if(inNum < 5)
+     rcv += (char)commCAM.read();
+    else if(inNum < 5 + 16)
+      Serial.print((char)commCAM.read());//aaa[inNum -5] = commCAM.read();
+      //data += (char)commCAM.read();
+    else commCAM.read();
+    
+    inNum ++;
+  } 
 
 
+  BA += 16;  
+  inNum = 0;
+
+//  buffer = aaa;
+//  imgFile.write(aaa,16); 
+}
 
 //4 refresh img
 void refreshImg(){
