@@ -5,7 +5,7 @@
 #include <SD.h>
  
  
- #define chipSelect 5
+ #define chipSelect 53
  #define commCAM Serial2
 
  

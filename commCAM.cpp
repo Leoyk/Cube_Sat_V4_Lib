@@ -1,7 +1,5 @@
 #include"commCAM.h"
 
-//#define debugCam 
-
 unsigned int inNum = 0;
 long picLen[4];
 long BA = 0;
@@ -15,8 +13,7 @@ File imgFile;
 char filename[10];
 
 void camInit(){
-  commCAM.begin(115200);    
-  pinMode(53, OUTPUT); // SS on Mega 	
+  commCAM.begin(115200);    	
   
   if (!SD.begin(chipSelect)) {
     Serial.println("Card failed, or not present");
@@ -198,7 +195,7 @@ bool orderPic(){// order PIC data if over return 0
     return 0;
     }
     
-  byte cmd[]={0x56,0x00,0x32,0x0C,0x00,0x0A,0,0,(BA >> 8)&0xFF,(BA >> 0)&0xFF,0,0,0,16,0x00,0x00};
+  byte cmd[]={0x56,0x00,0x32,0x0C,0x00,0x0A,0,0,(BA >> 8)&0xFF,(BA >> 0)&0xFF,0,0,0,36,0x00,0x00};
 
   commCAM.write(&cmd[0],sizeof(cmd)/sizeof(cmd[0])); 
 
@@ -215,7 +212,7 @@ String rcv = "";
   while (commCAM.available()){
     if(inNum < 5)
      rcv += (char)commCAM.read();
-    else if(inNum < 5 + 16)
+    else if(inNum < 5 + 36)
       Serial.print((char)commCAM.read());//aaa[inNum -5] = commCAM.read();
       //data += (char)commCAM.read();
     else commCAM.read();
@@ -224,7 +221,7 @@ String rcv = "";
   } 
 
 
-  BA += 16;  
+  BA += 36;  
   inNum = 0;
 
 //  buffer = aaa;
