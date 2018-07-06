@@ -4,7 +4,7 @@ unsigned int inNum = 0;
 long picLen[4];
 long BA = 0;
 long dl;
-uint8_t aaa[16];
+uint8_t aaa[32];
 
 Sd2Card card;
 
@@ -16,14 +16,12 @@ void camInit(){
   commCAM.begin(115200);    	
   
   if (!SD.begin(chipSelect)) {
-    Serial.println("Card failed, or not present");
-    return;
+    Serial.println("cam:Card failed, or not present");
   }   
   
-
-    Serial.println("ok");  
-  
   //复位摄像头  可选
+  orderReset();//测试通过
+  orderReset();//测试通过
   orderReset();//测试通过
 }
 
@@ -114,10 +112,10 @@ byte rcv[]={0x76,0x00,0x36,0x00};
 
     
    if(i < 4){//check wrong  
-      return 1;
+      return 0;
    }
    else {//check ok
-      return 0;
+      return 1;
    }
 }
 
@@ -156,7 +154,7 @@ byte rcv[]={0x76,0x00,0x34,0x00,0x04};
     }
 
    if(i < 4){//check wrong
-    return 1;
+    return 0;
    }
    else {//check ok
     dl += picLen[0] << 24;  
@@ -165,7 +163,7 @@ byte rcv[]={0x76,0x00,0x34,0x00,0x04};
     dl += picLen[3] << 0; 
     
     *lenth = dl;
-    return 0;
+    return 1;
    }
 }
 
@@ -195,10 +193,9 @@ bool orderPic(){// order PIC data if over return 0
     return 0;
     }
     
-  byte cmd[]={0x56,0x00,0x32,0x0C,0x00,0x0A,0,0,(BA >> 8)&0xFF,(BA >> 0)&0xFF,0,0,0,36,0x00,0x00};
+  byte cmd[]={0x56,0x00,0x32,0x0C,0x00,0x0A,0,0,(BA >> 8)&0xFF,(BA >> 0)&0xFF,0,0,0,32,0x00,0x00};
 
   commCAM.write(&cmd[0],sizeof(cmd)/sizeof(cmd[0])); 
-
   
   return 1;
 }
@@ -210,27 +207,31 @@ String rcv = "";
 
   inNum = 0;
   while (commCAM.available()){
-    if(inNum < 5)
+    if(inNum < 5){
      rcv += (char)commCAM.read();
-    else if(inNum < 5 + 36)
-      Serial.print((char)commCAM.read());//aaa[inNum -5] = commCAM.read();
-      //data += (char)commCAM.read();
-    else commCAM.read();
+	}
+    else if(inNum < 5 + 32){
+      aaa[inNum -5] = commCAM.read();
+	}
+    else{
+		commCAM.read();
+	}
     
     inNum ++;
   } 
 
 
-  BA += 36;  
+  BA += 32;  
   inNum = 0;
 
-//  buffer = aaa;
-//  imgFile.write(aaa,16); 
+  imgFile.write(aaa,32); 
 }
 
 //4 refresh img
 void refreshImg(){
   byte cmd[]={0x56,0x00,0x36,0x01,0x02};
+  commCAM.write(&cmd[0],sizeof(cmd)/sizeof(cmd[0]));
+  commCAM.write(&cmd[0],sizeof(cmd)/sizeof(cmd[0]));
   commCAM.write(&cmd[0],sizeof(cmd)/sizeof(cmd[0]));
   initV();   
   }
@@ -250,5 +251,4 @@ void initV(){
   
 void closeFile(){
     imgFile.close();  //完成后关闭文件
-	
 }

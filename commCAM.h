@@ -10,83 +10,97 @@
 
  
 /*
+#include"commCAM.h"
 
-#include"commINC.h"
+long lenth;//get the pic lenth
+String name;// get the pic name
 
-
+long cntCam = 0;
+long cntCamBuff = 0;
+long time;
 void setup() {
-  Serial.begin(115200);
-  camInit();
-  delay(200);
-  clearInput();
   
-  pinMode(4,1);
+Serial.begin(115200);//begin debug serial
+/********************print debug head info*******************************
+Serial.println();
+Serial.println("Cam begin");
+Serial.println();
+
+  camInit();//begin init camera
+  Serial.println("Cam init over");
+  
+  delay(100);
+  clearInput();
+/********************get cam version*******************************
+  do{
+    orderVersion();delay(10);
+  }while(getVersion() == 0);
+  
+  Serial.println("Cam get version over");
 }
 
 void loop() {
-long len = 0;
-String name = "";
-long time;
+
+/********************stop pic*******************************
+do{
+    orderStop();delay(10);
+  }while(getStop() == 0);
+
+  Serial.println("Cam stop pic over"); 
+  clearInput();
+
+/********************get pic lenth and pirnt*******************************
+  do{
+    orderLenth();delay(10);
+  }while(getLenth(&lenth) == 0);
+
+  Serial.print("Cam get lenth :");  
+  Serial.println(lenth);  
+  clearInput();
 
 
-//step 1: 停止刷新图像
-    do{
-      orderStop();
-      delay(10);
-    }while(!getStop());//check error 
-      
-    
-    
-//step 2: 获取数据长度到len
-    do{
-      orderLenth();
-      delay(10);
-    }while(!getLenth(&len));
-
-    
-//step 3:存入内存卡中
+/********************creat file for pic data*******************************
+  preFile(&name);
   
-  //3.0 创建并开启文件
-    preFile(&name);
-    Serial.print("Begin write ");
-    Serial.println(name);
-    Serial.print("total lenth :");
-    Serial.println(len);
-    
-    time = millis();
-  //3.1写入文件 
-    while(orderPic()){//如果还能order（返回 1）
-      //灭灯      
-      digitalWrite(4,0);
-      //等数据
-      delay(10);  
-      //亮灯
-      digitalWrite(4,1);
-      //写数据
-      getPic();       //则持续获取图片并写入文件  
-      
-    Serial.print(".");
+  Serial.print("pic name is :");  
+  Serial.println(name);  
+  clearInput();
+  
+for(long a = lenth; a > 0;a -= 64*32){
+    Serial.print("#");  
+  }
+    Serial.println("*");
+/********************order picture******************************* 
+
+
+time = millis();
+
+while(orderPic())  {  
+  delay(10);
+  getPic();
+   
+  cntCam ++;
+  if(cntCam -cntCamBuff > 64) {
+    Serial.print("#");  
+    cntCamBuff = cntCam;
     }
-    Serial.println();
-  //3.2完成后关闭文件
-    closeFile(); 
-    
-    
-//step 4:恢复刷新屏幕
-    refreshImg();
-    
-    Serial.print(name);
-    Serial.println(" is complated.");
-    Serial.print("using ");
-    Serial.print(millis()-time);
-    Serial.println("ms.");
-    Serial.println();
-    
-//灯灭掉2s
-    digitalWrite(4,0);
-    delay(2000);
+
 }
-*/ 
+    Serial.println("#*");
+/********************close file when read over*******************************
+  closeFile();  
+time = millis()-time;
+/********************refresh image******************************* 
+refreshImg(); 
+  Serial.print("save PIC over,cost: ");  
+  Serial.print(time);  
+  Serial.println("ms");  
+
+
+/********************delay for next shot*******************************
+delay(50000);
+}
+*/
  
  
  
