@@ -3,7 +3,8 @@
 #include "SoftwareSerial.h"
 
 
-SoftwareSerial comm = SoftwareSerial(10,11);//R T
+//SoftwareSerial comm = SoftwareSerial(10,11);//R T
+SoftwareSerial comm = SoftwareSerial(A14,A15);//R T
 //#define comm Serial2
 // 10, 11, 12, 13, 50, 51, 52, 53, 62, 63, 64, 65, 66, 67, 68, 69
 

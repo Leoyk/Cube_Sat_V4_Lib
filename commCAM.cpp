@@ -186,7 +186,7 @@ void preFile(String* name){
   imgFile = SD.open(filename, FILE_WRITE);  
   *name = filename;
 }
-
+/*
 bool orderPic(){// order PIC data if over return 0
 
   if(BA >= dl){//如果起始地址小于总长
@@ -226,6 +226,67 @@ String rcv = "";
 
   imgFile.write(aaa,32); 
 }
+*/
+
+bool orderPic(){// order PIC data if over return 0
+
+  if(BA >= dl){//如果起始地址小于总长
+    return 0;
+    }
+    
+  byte cmd[]={0x56,0x00,0x32,0x0C,0x00,0x0A,0,0,(BA >> 8)&0xFF,(BA >> 0)&0xFF,0,0,0,32,0x00,0x00};
+
+  commCAM.write(&cmd[0],sizeof(cmd)/sizeof(cmd[0])); 
+  
+  return 1;
+}
+
+void getPic(){//get PIC data
+
+static String data = "";
+static String rcv = "";
+static int i = 0;
+
+byte rge[]={0x76,0x00,0x32,0x00,0x00};
+
+  i = 0;
+  inNum = 0;
+  while (commCAM.available()){
+    if(inNum < 5){
+     rcv += (char)commCAM.read();
+	}
+    else if(inNum < 5 + 32){
+      aaa[inNum -5] = commCAM.read();
+	}
+    else{
+		commCAM.read();
+	}
+
+		
+   inNum ++;
+	
+ } 
+
+  inNum = 0;
+	
+   for(i = 0;i < 5;i ++){
+		if(rge[i] != rcv[i])
+		  break;
+		}
+		
+   if(i < 4){//check wrong
+    return;
+   }
+   else{
+	  BA += 32; 
+   }
+  imgFile.write(aaa,32); 
+  return;
+}
+
+
+
+
 
 //4 refresh img
 void refreshImg(){
